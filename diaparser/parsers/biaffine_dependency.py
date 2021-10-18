@@ -243,7 +243,11 @@ class BiaffineDependencyParser(Parser):
         elif args.feat == 'bert':
             tokenizer = BertField.tokenizer(args.bert)
 
-            args.max_len = min(args.max_len or tokenizer.max_len, tokenizer.max_len)
+            try:
+                args.max_len = min(args.max_len or tokenizer.max_len, tokenizer.max_len)
+            except AttributeError: # newer transformers uses 'model_max_length'
+                args.max_len = min(args.max_len or tokenizer.model_max_length, tokenizer.model_max_length)
+
             FEAT = BertField('bert', tokenizer, fix_len=args.fix_len)
             WORD.bos = FEAT.bos  # ensure representations have the same length
         else:
