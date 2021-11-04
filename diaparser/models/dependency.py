@@ -212,6 +212,12 @@ class BiaffineDependencyModel(nn.Module):
             self.pretrained = nn.Embedding.from_pretrained(embed)
             nn.init.zeros_(self.word_embed.weight)
         return self
+        
+    def load_bert_weights(self, load_bert=False):
+        # load pretrained bert weights if needed
+        if load_bert==True:
+            self.feat_embed.load_pretrained_weights()
+            
 
     def forward(self, words: torch.Tensor,
                 feats: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:

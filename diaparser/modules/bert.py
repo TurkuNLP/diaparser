@@ -65,7 +65,8 @@ class BertEmbedding(nn.Module):
 
         config = AutoConfig.from_pretrained(model, output_hidden_states=True,
                                             output_attentions=use_attentions)
-        self.bert = AutoModel.from_pretrained(model, config=config)
+        self.bert = AutoModel.from_config(config) # init with config, load pretrained weights later if needed
+
         self.bert.requires_grad_(requires_grad)
 
         self.model = model
@@ -88,6 +89,9 @@ class BertEmbedding(nn.Module):
         self.scalar_mix = ScalarMix(self.n_layers, mix_dropout)
         if self.hidden_size != self.n_out:
             self.projection = nn.Linear(self.hidden_size, self.n_out, False)
+            
+    def load_pretrained_weights(self):
+        self.bert = AutoModel.from_pretrained(self.model, config=self.bert.config)
 
     def __repr__(self):
         s = f"{self.model}, n_layers={self.n_layers}, n_out={self.n_out}"

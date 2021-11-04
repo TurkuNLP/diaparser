@@ -233,6 +233,7 @@ class BiaffineDependencyParser(Parser):
         if os.path.exists(path) and not args.build:
             parser = cls.load(**args)
             parser.model = cls.MODEL(**parser.args)
+            parser.model.load_bert_weights(load_bert=False) # bert pretrained weigths are not needed when loading the model from disk
             parser.model.load_pretrained(parser.WORD.embed).to(args.device)
             return parser
 
@@ -279,5 +280,6 @@ class BiaffineDependencyParser(Parser):
         logger.info(f"   {FEAT}\n   {ARC}\n   {REL}")
 
         model = cls.MODEL(**args)
+        model.load_bert_weights(load_bert=True)
         model.load_pretrained(WORD.embed).to(args.device)
         return cls(args, model, transform)

@@ -259,6 +259,7 @@ class Parser():
         cls = getattr(parsers, state['name'])
         args = state['args'].update(args)
         model = cls.MODEL(**args)
+        model.load_bert_weights(load_bert=False) # pretrained bert weights not needed
         model.load_pretrained(state['pretrained'])
         model.load_state_dict(state['state_dict'], False)
         model.to(args.device)
